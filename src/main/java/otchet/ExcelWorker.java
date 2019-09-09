@@ -14,6 +14,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
@@ -32,13 +33,13 @@ public class ExcelWorker {
     //Время конца опоздания
     static LocalTime end_time = LocalTime.of(9, 10, 00);
     static LocalDateTime end_datetime = LocalDateTime.of(date, end_time);
-    
-     public static void setDate(LocalDate date) {
-         ExcelWorker.date = date;
-         //Переопределяем время начала и конца опозданий
-         datetime = LocalDateTime.of(date, time);
-         end_datetime = LocalDateTime.of(date, end_time);
-     }
+
+    public static void setDate(LocalDate date) {
+        ExcelWorker.date = date;
+        //Переопределяем время начала и конца опозданий
+        datetime = LocalDateTime.of(date, time);
+        end_datetime = LocalDateTime.of(date, end_time);
+    }
 
     // заполнение строки (rowNum) определенного листа (sheet)
     // данными  из dataModel созданного в памяти Excel файла
@@ -63,6 +64,7 @@ public class ExcelWorker {
         row.createCell(3).setCellValue(dataModel.getDirection());
         row.createCell(4).setCellValue(dataModel.getFio());
         row.createCell(5).setCellValue(dataModel.getPodr());
+
     }
 
     private static void createSheetHeaderNeyav(HSSFSheet sheet, int rowNum, DataModel dataModel) {
@@ -115,6 +117,12 @@ public class ExcelWorker {
 //                System.out.println(data.getDate() + "|" + data.getTime() + "|" + data.getSt() + "|" + data.getDirection() + "|" + data.getFio());
                 createSheetHeader(sheet, ++rowNum, data);
             }
+            sheet.autoSizeColumn(0);
+            sheet.autoSizeColumn(1);
+            sheet.autoSizeColumn(2);
+            sheet.autoSizeColumn(3);
+            sheet.autoSizeColumn(4);
+            sheet.autoSizeColumn(5);
 
         }
         //Создаём лист с опоздавшими детьми
@@ -166,6 +174,12 @@ public class ExcelWorker {
 //                System.out.println(data.getDate() + "|" + data.getTime() + "|" + data.getSt() + "|" + data.getDirection() + "|" + data.getFio());
                 createSheetHeaderOp(sheet, ++rowNum, data);
             }
+            sheet.autoSizeColumn(0);
+            sheet.autoSizeColumn(1);
+            sheet.autoSizeColumn(2);
+            sheet.autoSizeColumn(3);
+            sheet.autoSizeColumn(4);
+            sheet.autoSizeColumn(5);
 
         }
 
@@ -199,6 +213,13 @@ public class ExcelWorker {
 //                System.out.println(data.getDate() + "|" + data.getTime() + "|" + data.getSt() + "|" + data.getDirection() + "|" + data.getFio());
                 createSheetHeaderNeyav(sheet, ++rowNum, data);
             }
+
+            sheet.autoSizeColumn(0);
+            sheet.autoSizeColumn(1);
+            sheet.autoSizeColumn(2);
+            sheet.autoSizeColumn(3);
+            sheet.autoSizeColumn(4);
+            sheet.autoSizeColumn(5);
 
         }
 
