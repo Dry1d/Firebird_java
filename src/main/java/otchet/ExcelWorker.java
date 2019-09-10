@@ -11,12 +11,13 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 
 /**
@@ -43,43 +44,85 @@ public class ExcelWorker {
 
     // заполнение строки (rowNum) определенного листа (sheet)
     // данными  из dataModel созданного в памяти Excel файла
-    private static void createSheetHeader(HSSFSheet sheet, int rowNum, DataModel dataModel) {
+    private static void createSheetHeader(HSSFSheet sheet, int rowNum, DataModel dataModel, CellStyle cellStyle) {
 
         Row row = sheet.createRow(rowNum);
 
-        row.createCell(0).setCellValue(dataModel.getDate());
-        row.createCell(1).setCellValue(dataModel.getTime());
-        row.createCell(2).setCellValue(dataModel.getSt());
-        row.createCell(3).setCellValue(dataModel.getDirection());
-        row.createCell(4).setCellValue(dataModel.getFio());
+        Cell cell0 = row.createCell(0);
+        Cell cell1 = row.createCell(1);
+        Cell cell2 = row.createCell(2);
+        Cell cell3 = row.createCell(3);
+        Cell cell4 = row.createCell(4);
+        cell0.setCellStyle(cellStyle);
+        cell1.setCellStyle(cellStyle);
+        cell2.setCellStyle(cellStyle);
+        cell3.setCellStyle(cellStyle);
+        cell4.setCellStyle(cellStyle);
+        cell0.setCellValue(dataModel.getDate());
+        cell1.setCellValue(dataModel.getTime());
+        cell2.setCellValue(dataModel.getSt());
+        cell3.setCellValue(dataModel.getDirection());
+        cell4.setCellValue(dataModel.getFio());
+
     }
 
-    private static void createSheetHeaderOp(HSSFSheet sheet, int rowNum, DataModel dataModel) {
+    private static void createSheetHeaderOp(HSSFSheet sheet, int rowNum, DataModel dataModel, CellStyle cellStyle) {
 
         Row row = sheet.createRow(rowNum);
 
-        row.createCell(0).setCellValue(dataModel.getDate());
-        row.createCell(1).setCellValue(dataModel.getTime());
-        row.createCell(2).setCellValue(dataModel.getSt());
-        row.createCell(3).setCellValue(dataModel.getDirection());
-        row.createCell(4).setCellValue(dataModel.getFio());
-        row.createCell(5).setCellValue(dataModel.getPodr());
+        Cell cell0 = row.createCell(0);
+        Cell cell1 = row.createCell(1);
+        Cell cell2 = row.createCell(2);
+        Cell cell3 = row.createCell(3);
+        Cell cell4 = row.createCell(4);
+        Cell cell5 = row.createCell(5);
+        cell0.setCellStyle(cellStyle);
+        cell1.setCellStyle(cellStyle);
+        cell2.setCellStyle(cellStyle);
+        cell3.setCellStyle(cellStyle);
+        cell4.setCellStyle(cellStyle);
+        cell5.setCellStyle(cellStyle);
+        cell0.setCellValue(dataModel.getDate());
+        cell1.setCellValue(dataModel.getTime());
+        cell2.setCellValue(dataModel.getSt());
+        cell3.setCellValue(dataModel.getDirection());
+        cell4.setCellValue(dataModel.getFio());
+        cell5.setCellValue(dataModel.getPodr());
 
     }
 
-    private static void createSheetHeaderNeyav(HSSFSheet sheet, int rowNum, DataModel dataModel) {
+    private static void createSheetHeaderNeyav(HSSFSheet sheet, int rowNum, DataModel dataModel, CellStyle cellStyle) {
 
         Row row = sheet.createRow(rowNum);
 
-        row.createCell(0).setCellValue(dataModel.getDate());
-        row.createCell(1).setCellValue(dataModel.getFio());
-        row.createCell(2).setCellValue(dataModel.getPodr());
+        Cell cell0 = row.createCell(0);
+        Cell cell1 = row.createCell(1);
+        Cell cell2 = row.createCell(2);
+
+        cell0.setCellStyle(cellStyle);
+        cell1.setCellStyle(cellStyle);
+        cell2.setCellStyle(cellStyle);
+
+        cell0.setCellValue(dataModel.getDate());
+        cell1.setCellValue(dataModel.getFio());
+        cell2.setCellValue(dataModel.getPodr());
+
+//        row.createCell(0).setCellValue(dataModel.getDate());
+//        row.createCell(1).setCellValue(dataModel.getFio());
+//        row.createCell(2).setCellValue(dataModel.getPodr());
     }
 
     public static void worker(String absolutefilepath, List<DataModel> dataModels) {
 
         // создание самого excel файла в памяти
         HSSFWorkbook workbook = new HSSFWorkbook();
+
+        CellStyle cellStyle = workbook.createCellStyle();
+//            cellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        cellStyle.setBorderTop(BorderStyle.THIN);
+        cellStyle.setBorderBottom(BorderStyle.THIN);
+        cellStyle.setBorderLeft(BorderStyle.THIN);
+        cellStyle.setBorderRight(BorderStyle.THIN);
 //        // создание листа с названием "Просто лист"
 //        HSSFSheet sheet = workbook.createSheet("Просто лист");
 
@@ -99,11 +142,24 @@ public class ExcelWorker {
             int rowNum = 0;
 
             Row row = sheet.createRow(rowNum);
-            row.createCell(0).setCellValue("Дата");
-            row.createCell(1).setCellValue("Время");
-            row.createCell(2).setCellValue("Стойка");
-            row.createCell(3).setCellValue("Направление");
-            row.createCell(4).setCellValue("ФИО");
+            Cell row0 = row.createCell(0);
+            Cell row1 = row.createCell(1);
+            Cell row2 = row.createCell(2);
+            Cell row3 = row.createCell(3);
+            Cell row4 = row.createCell(4);
+//            Cell row5 = row.createCell(5);
+            row0.setCellStyle(cellStyle);
+            row1.setCellStyle(cellStyle);
+            row2.setCellStyle(cellStyle);
+            row3.setCellStyle(cellStyle);
+            row4.setCellStyle(cellStyle);
+//            row5.setCellStyle(cellStyle);
+            row0.setCellValue("Дата");
+            row1.setCellValue("Время");
+            row2.setCellValue("Стойка");
+            row3.setCellValue("Направление");
+            row4.setCellValue("ФИО");
+//            row5.setCellValue("Подразделение");
 
             List<DataModel> sheetDataModel = new ArrayList<>();
             for (DataModel dataModel0 : dataList) {
@@ -115,7 +171,7 @@ public class ExcelWorker {
             for (DataModel data : sheetDataModel) {
 //                System.out.println(dataModel.getPodr());
 //                System.out.println(data.getDate() + "|" + data.getTime() + "|" + data.getSt() + "|" + data.getDirection() + "|" + data.getFio());
-                createSheetHeader(sheet, ++rowNum, data);
+                createSheetHeader(sheet, ++rowNum, data, cellStyle);
             }
             sheet.autoSizeColumn(0);
             sheet.autoSizeColumn(1);
@@ -135,17 +191,28 @@ public class ExcelWorker {
                 sheet = workbook.getSheet("Опоздавшие");
             }
 //            HSSFSheet sheet = workbook.createSheet("Опоздавшие");
-
             // счетчик для строк
             int rowNum = 0;
 
             Row row = sheet.createRow(rowNum);
-            row.createCell(0).setCellValue("Дата");
-            row.createCell(1).setCellValue("Время");
-            row.createCell(2).setCellValue("Стойка");
-            row.createCell(3).setCellValue("Направление");
-            row.createCell(4).setCellValue("ФИО");
-            row.createCell(5).setCellValue("Подразделение");
+            Cell row0 = row.createCell(0);
+            Cell row1 = row.createCell(1);
+            Cell row2 = row.createCell(2);
+            Cell row3 = row.createCell(3);
+            Cell row4 = row.createCell(4);
+            Cell row5 = row.createCell(5);
+            row0.setCellStyle(cellStyle);
+            row1.setCellStyle(cellStyle);
+            row2.setCellStyle(cellStyle);
+            row3.setCellStyle(cellStyle);
+            row4.setCellStyle(cellStyle);
+            row5.setCellStyle(cellStyle);
+            row0.setCellValue("Дата");
+            row1.setCellValue("Время");
+            row2.setCellValue("Стойка");
+            row3.setCellValue("Направление");
+            row4.setCellValue("ФИО");
+            row5.setCellValue("Подразделение");
 
             List<DataModel> sheetDataModel0 = new ArrayList<>();
             for (DataModel dataModel1 : dataList) {
@@ -172,7 +239,7 @@ public class ExcelWorker {
             for (DataModel data : sheetDataModel0) {
 //                System.out.println("Опоздуны");
 //                System.out.println(data.getDate() + "|" + data.getTime() + "|" + data.getSt() + "|" + data.getDirection() + "|" + data.getFio());
-                createSheetHeaderOp(sheet, ++rowNum, data);
+                createSheetHeaderOp(sheet, ++rowNum, data, cellStyle);
             }
             sheet.autoSizeColumn(0);
             sheet.autoSizeColumn(1);
@@ -197,9 +264,15 @@ public class ExcelWorker {
             int rowNum = 0;
 
             Row row = sheet.createRow(rowNum);
-            row.createCell(0).setCellValue("Дата");
-            row.createCell(1).setCellValue("ФИО");
-            row.createCell(2).setCellValue("Подразделение");
+            Cell row0 = row.createCell(0);
+            Cell row1 = row.createCell(1);
+            Cell row2 = row.createCell(2);
+            row0.setCellStyle(cellStyle);
+            row1.setCellStyle(cellStyle);
+            row2.setCellStyle(cellStyle);
+            row0.setCellValue("Дата");
+            row1.setCellValue("ФИО");
+            row2.setCellValue("Подразделение");
 
             List<DataModel> sheetDataModel1 = new ArrayList<>();
             for (DataModel dataModel2 : dataList) {
@@ -211,7 +284,7 @@ public class ExcelWorker {
             for (DataModel data : sheetDataModel1) {
 //                System.out.println("Опоздуны");
 //                System.out.println(data.getDate() + "|" + data.getTime() + "|" + data.getSt() + "|" + data.getDirection() + "|" + data.getFio());
-                createSheetHeaderNeyav(sheet, ++rowNum, data);
+                createSheetHeaderNeyav(sheet, ++rowNum, data, cellStyle);
             }
 
             sheet.autoSizeColumn(0);

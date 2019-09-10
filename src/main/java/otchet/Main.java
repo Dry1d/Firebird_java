@@ -16,13 +16,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import javax.mail.*;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 
 /**
  *
@@ -59,12 +57,12 @@ public class Main {
 
         //Проверка условия наличия файла с параметрами, или аргументов
         
-        if (new File("."+fileSeparator+"properties.cfg").exists()) {
+        if (new File(folder+fileSeparator+"properties.cfg").exists()) {
             FileInputStream fileInputStream;
 
             try {
                 //обращаемся к файлу и получаем данные
-                fileInputStream = new FileInputStream("properties.cfg");
+                fileInputStream = new FileInputStream(folder+fileSeparator+"properties.cfg");
                 prop.load(fileInputStream);
 
                 folder = prop.getProperty("folder");
@@ -116,7 +114,7 @@ public class Main {
                     rew_flag = true;
                 }
             }
-        } else if(args.length == 0 && !new File("."+fileSeparator+"properties.cfg").exists()){
+        } else if(args.length == 0 && !new File(folder+fileSeparator+"properties.cfg").exists()){
             usage();
         }
 
@@ -283,8 +281,10 @@ public class Main {
         System.out.println("-mp <password>                                      -Пароль от почты");
         System.out.println("-mt ОТ_КОГО@DOMAIN                                  -От кого");
         System.out.println("-mf КОМУ@DOMAIN                                     -Кому, возможно перечисление, например: почта1;почта2;почта3");
-        System.out.println("-sH smtp.yandex.ru \n-sP 465                                           -Параметры для подключения к серверу smtp");
+        System.out.println("-sH smtp.yandex.ru "
+                         + "-sP 465                                             -Параметры для подключения к серверу smtp");
         System.out.println("-rw                                                 -Перезапись файла properties.cfg параметрами из аргументов");
+        System.out.println("                                                    -файл properties.cfg формируется в папке folder");
         System.out.println("По умолчанию производилась отправка с yandex почты по протоколу SSL, если не работает, потребуется создавать класс TLS_Sender или другой");
     }
 
