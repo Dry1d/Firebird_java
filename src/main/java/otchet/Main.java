@@ -38,6 +38,12 @@ public class Main {
         //Изменяемые параметры
         LocalDate date = LocalDate.now();
 //        date = date.minusDays(5);
+        //Стойка 1 номера считывателей, берется из базы FireBird, configs_tree.id_configs_tree
+        String st1sch1 = "6078"; //вход
+        String st1sch2 = "6212"; //выход
+        //Стойка 2 номера считывателей, берется из базы FireBird, configs_tree.id_configs_tree
+        String st2sch1 = "9718"; //выход
+        String st2sch2 = "9852"; //вход
 
         String fileSeparator = System.getProperty("file.separator");
         String folder = "D:\\SCUD\\Otchet";
@@ -134,9 +140,10 @@ public class Main {
             
             prop.store(new FileWriter("."+fileSeparator+"properties.cfg"), "Перезаписываем файл properties");
         }
-        System.out.println("Используется папка: " + folder + "\nАдрес: " + addr + "\nОтправляем с почты: " + mail_to + "\nНа почту: " + mail_from + "\nЧерез хост: " + smtpHost + ":" + smtpPort + "\nТема письма: " + subject + "\nТекст письма: " + content);
+        System.out.println("Используется папка: " + folder + "\nАдрес: " + addr + "\nОтправляем с почты: " + mail_to + "\nНа почту: " + mail_from + "\nЧерез хост: " + smtpHost + ":" + smtpPort + "\nТема письма: Отчет СКУД\nТекст письма: " + date.toString());
 
         //Заглушка для почты
+//        mail_login="";
         subject = "Отчет СКУД";
         content = date.toString();
 
@@ -158,6 +165,7 @@ public class Main {
             // Инициализируемя Firebird JDBC driver.
             // Эта строка действительна только для Firebird.
             // Для других СУБД она будет немного видоизменена.
+            System.out.println("Инициализируемя Firebird JDBC driver");
             Class.forName("org.firebirdsql.jdbc.FBDriver").newInstance();
         } catch (IllegalAccessException | InstantiationException | ClassNotFoundException ex) {
         }
@@ -166,17 +174,19 @@ public class Main {
 
         try {
             //Создаём подключение к базе данных
+            System.out.println("Создаём подключение к базе данных");
             conn = DriverManager.getConnection(databaseURL, user, password);
             if (conn == null) {
                 System.err.println("Could not connect to database");
             }
-
+            
             // Создаём класс, с помощью которого будут выполняться 
             // SQL запросы.
             Statement stmt = conn.createStatement();
 
             //Выполняем SQL запрос.
             //Список подразделений
+            System.out.println("Запрашиваем события");
             ResultSet rs = stmt.executeQuery(strSQL);
 
             // Смотрим количество колонок в результате SQL запроса.
@@ -187,11 +197,12 @@ public class Main {
             while (rs.next()) {
 
                 String direction = "";
-                if ("6078".equals(rs.getObject(5).toString()) || "9852".equals(rs.getObject(5).toString())) {
+                if (st1sch1.equals(rs.getObject(5).toString()) || st2sch2.equals(rs.getObject(5).toString())) {
                     direction = "вход";
-                } else if ("6212".equals(rs.getObject(5).toString()) || "9718".equals(rs.getObject(5).toString())) {
+                } else if (st1sch2.equals(rs.getObject(5).toString()) || st2sch1.equals(rs.getObject(5).toString())) {
                     direction = "выход";
                 }
+                //Проверка на дублирование записей
                 if (!dataModels.isEmpty()) {
                     if (dataModels.get(dataModels.size() - 1).getId() != Integer.parseInt(rs.getObject(1).toString())) {
                         dataModels.add(new DataModel(Integer.parseInt(rs.getObject(1).toString()), rs.getObject(2).toString(), rs.getObject(3).toString(), rs.getObject(4).toString(), direction, rs.getObject(6).toString(), rs.getObject(7).toString(), rs.getObject(8).toString()));
@@ -204,6 +215,7 @@ public class Main {
             }
 
             //Создаём список тех, кто не пришел
+            System.out.println("Создаём список не явившихся");
             ResultSet rsOP = stmt.executeQuery(op_strSQL);
             //Список всех учеников и сотрудников без исключения
             List<DataModel> dMs = new ArrayList<>();
@@ -226,7 +238,8 @@ public class Main {
                     } catch (Exception e) {
 
                     }
-                });//                    System.out.println(dM.getId_staff()+" "+dataM.getId_staff());
+                });
+//                    System.out.println(dM.getId_staff()+" "+dataM.getId_staff());
 //                    System.out.println(dM.getId_staff() == dataM.getId_staff());
             }
 
@@ -237,13 +250,16 @@ public class Main {
             });
 
             //Создаём документ excel
+            System.out.println("Формируем файл Excel");
             ExcelWorker ew = new ExcelWorker();
             ew.setDate(date);
             ew.worker(otchet_date, dataModels);
             // Освобождаем ресурсы.
+            System.out.println("Освобождаем ресурсы");
             stmt.close();
             conn.close();
-
+            
+            System.out.println("Отправляем файл по почте...");
             if (mail_login != "" ) {
                 System.out.println("Идет отправка письма...");
                 if (mail_from.contains(";")) {

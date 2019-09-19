@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>JForex-SDK-Local-Maven</groupId>
     <artifactId>Firebird_Java</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
@@ -32,6 +32,11 @@
             <groupId>com.github.leleuj.springframework.security</groupId>
             <artifactId>spring-security-oauth-client</artifactId>
             <version>1.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.rockswang</groupId>
+            <artifactId>java-curl</artifactId>
+            <version>1.2.2.2</version>
         </dependency>
     </dependencies>
     <properties>
@@ -75,6 +80,9 @@
                             <outputDirectory>
                                 ${project.build.directory}/${project.build.finalName}.lib
                             </outputDirectory>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
                         </configuration>
                     </execution>
                 </executions>
