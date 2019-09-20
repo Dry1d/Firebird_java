@@ -275,17 +275,11 @@ public class ExcelWorker {
             row4.setCellValue("ФИО");
             row5.setCellValue("Подразделение");
 
-            List<DataModel> sheetDataModel = new ArrayList<>();
-            for (DataModel dataModel0 : dataList) {
-                if (dataModel.getPodr() == null ? dataModel0.getPodr() == null : dataModel.getPodr().equals(dataModel0.getPodr())) {
-                    sheetDataModel.add(dataModel0);
-                }
-
-            }
-            for (DataModel data : sheetDataModel) {
+            
+            for (DataModel data : sheetDataModel1) {
 //                System.out.println(dataModel.getPodr());
 //                System.out.println(data.getDate() + "|" + data.getTime() + "|" + data.getSt() + "|" + data.getDirection() + "|" + data.getFio());
-                createSheetHeader(sheet, ++rowNum, data, cellStyle);
+                createSheetHeaderOp(sheet, ++rowNum, data, cellStyle);
             }
             sheet.autoSizeColumn(0);
             sheet.autoSizeColumn(1);
