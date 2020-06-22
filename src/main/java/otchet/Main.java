@@ -17,8 +17,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import javax.mail.*;
 
@@ -157,9 +159,24 @@ public class Main {
 //        String strSQL="select tabel_intermediadate.id_tb_in, datediff (second, cast('01.01.0001 00:00:00' as timestamp), tabel_intermediadate.date_pass ) seconds, tabel_intermediadate.date_pass, tabel_intermediadate.date_pass + tabel_intermediadate.time_pass timestamp_pass, tabel_intermediadate.type_pass, trim(staff.tabel_id) tabel_id, staff.last_name || ' ' || staff.first_name || ' ' || staff.middle_name fio, staff.id_staff from staff right outer join tabel_intermediadate on (staff.id_staff = tabel_intermediadate.staff_id)";
 //        String strSQL="select tabel_intermediadate.date_pass + tabel_intermediadate.time_pass timestamp_pass, tabel_intermediadate.type_pass, configs_tree.display_name, staff.last_name || ' ' || staff.first_name || ' ' || staff.middle_name fio,  subdiv_ref.display_name from staff right outer join tabel_intermediadate on (staff.id_staff = tabel_intermediadate.staff_id) join staff_ref on (staff.id_staff = staff_ref.staff_id) join subdiv_ref on (staff_ref.subdiv_id = subdiv_ref.id_ref) join configs_tree on (tabel_intermediadate.config_tree_id = configs_tree.id_configs_tree) WHERE tabel_intermediadate.date_pass='2019-09-02' AND  subdiv_ref.id_ref = '5079'";
         //Запрос событий
-        String strSQL = "select tabel_intermediadate.id_tb_in, tabel_intermediadate.date_pass timestamp_pass, tabel_intermediadate.time_pass timestamp_pass, tabel_intermediadate.type_pass, tabel_intermediadate.config_tree_id, staff.last_name || ' ' || staff.first_name || ' ' || staff.middle_name fio,  subdiv_ref.display_name , staff.id_staff from staff right outer join tabel_intermediadate on (staff.id_staff = tabel_intermediadate.staff_id) join staff_ref on (staff.id_staff = staff_ref.staff_id) join subdiv_ref on (staff_ref.subdiv_id = subdiv_ref.id_ref) join configs_tree on (tabel_intermediadate.config_tree_id = configs_tree.id_configs_tree) WHERE tabel_intermediadate.date_pass='" + date.getYear() + "-" + date.getMonthValue() + "-" + date.getDayOfMonth() + "'";
+        String strSQL = "select tabel_intermediadate.id_tb_in, "
+                + "tabel_intermediadate.date_pass timestamp_pass, "
+                + "tabel_intermediadate.time_pass timestamp_pass, "
+                + "tabel_intermediadate.type_pass, "
+                + "tabel_intermediadate.config_tree_id, "
+                + "staff.last_name || ' ' || staff.first_name || ' ' || staff.middle_name fio,  "
+                + "subdiv_ref.display_name , "
+                + "staff.id_staff from staff "
+                + "right outer join tabel_intermediadate on (staff.id_staff = tabel_intermediadate.staff_id) "
+                + "join staff_ref on (staff.id_staff = staff_ref.staff_id) "
+                + "join subdiv_ref on (staff_ref.subdiv_id = subdiv_ref.id_ref) "
+                + "join configs_tree on (tabel_intermediadate.config_tree_id = configs_tree.id_configs_tree) "
+                + "WHERE tabel_intermediadate.date_pass='" + date.getYear() + "-" + date.getMonthValue() + "-" + date.getDayOfMonth() + "'";
         //Запрос общего списка детей и сотрудников
-        String op_strSQL = "select staff.id_staff, staff.last_name || ' ' || staff.first_name || ' ' || staff.middle_name fio,  subdiv_ref.display_name from staff right outer join staff_ref on (staff.id_staff = staff_ref.staff_id) join subdiv_ref on (staff_ref.subdiv_id = subdiv_ref.id_ref) ";
+        String op_strSQL = "select staff.id_staff, staff.last_name || ' ' || staff.first_name || ' ' || staff.middle_name fio,  "
+                + "subdiv_ref.display_name from staff "
+                + "right outer join staff_ref on (staff.id_staff = staff_ref.staff_id) "
+                + "join subdiv_ref on (staff_ref.subdiv_id = subdiv_ref.id_ref) ";
 
         try {
             // Инициализируемя Firebird JDBC driver.
@@ -192,8 +209,8 @@ public class Main {
             // Смотрим количество колонок в результате SQL запроса.
 //            int nColumnsCount = rs.getMetaData().getColumnCount();
             // Выводим результат.
-            List<DataModel> dataModels = new ArrayList<>();
-
+//            List<DataModel> dataModels = new ArrayList<>();
+            Map<Integer,DataModel> map= new HashMap();
             while (rs.next()) {
 
                 String direction = "";
@@ -202,30 +219,54 @@ public class Main {
                 } else if (st1sch2.equals(rs.getObject(5).toString()) || st2sch1.equals(rs.getObject(5).toString())) {
                     direction = "выход";
                 }
-                //Проверка на дублирование записей
-                if (!dataModels.isEmpty()) {
-                    if (dataModels.get(dataModels.size() - 1).getId() != Integer.parseInt(rs.getObject(1).toString())) {
-                        dataModels.add(new DataModel(Integer.parseInt(rs.getObject(1).toString()), rs.getObject(2).toString(), rs.getObject(3).toString(), rs.getObject(4).toString(), direction, rs.getObject(6).toString(), rs.getObject(7).toString(), rs.getObject(8).toString()));
-                    } else {
-//                        System.out.println("Событие уже было");
-                    }
-                } else {
-                    dataModels.add(new DataModel(Integer.parseInt(rs.getObject(1).toString()), rs.getObject(2).toString(), rs.getObject(3).toString(), rs.getObject(4).toString(), direction, rs.getObject(6).toString(), rs.getObject(7).toString(), rs.getObject(8).toString()));
+                if(!map.containsKey(Integer.parseInt(rs.getObject(1).toString()))){
+                    map.put(Integer.parseInt(rs.getObject(1).toString()), new DataModel(Integer.parseInt(rs.getObject(1).toString()), rs.getObject(2).toString(), rs.getObject(3).toString(), rs.getObject(4).toString(), direction, rs.getObject(6).toString(), rs.getObject(7).toString(), rs.getObject(8).toString()));
                 }
+                //Проверка на дублирование записей
+//                if (!dataModels.isEmpty()) {
+//                    if (dataModels.get(dataModels.size() - 1).getId() != Integer.parseInt(rs.getObject(1).toString())) {
+//                        dataModels.add(new DataModel(Integer.parseInt(rs.getObject(1).toString()), rs.getObject(2).toString(), rs.getObject(3).toString(), rs.getObject(4).toString(), direction, rs.getObject(6).toString(), rs.getObject(7).toString(), rs.getObject(8).toString()));
+//                    } else {
+////                        System.out.println("Событие уже было");
+//                    }
+//                } else {
+//                    dataModels.add(new DataModel(Integer.parseInt(rs.getObject(1).toString()), rs.getObject(2).toString(), rs.getObject(3).toString(), rs.getObject(4).toString(), direction, rs.getObject(6).toString(), rs.getObject(7).toString(), rs.getObject(8).toString()));
+//                }
             }
 
             //Создаём список тех, кто не пришел
             System.out.println("Создаём список не явившихся");
             ResultSet rsOP = stmt.executeQuery(op_strSQL);
             //Список всех учеников и сотрудников без исключения
-            List<DataModel> dMs = new ArrayList<>();
+//            List<DataModel> dMs = new ArrayList<>();
+            Map<Integer, DataModel> dMs = new HashMap();
 
             while (rsOP.next()) {
+//                System.out.println(rsOP.getObject(1).toString()+" "+date.toString()+" 0 0 не явка"+rsOP.getObject(2).toString()+" "+rsOP.getObject(3).toString()+" "+rsOP.getObject(1).toString());
+                dMs.put(Integer.parseInt(rsOP.getObject(1).toString()), 
+                        new DataModel(Integer.parseInt(rsOP.getObject(1).toString()), 
+                                date.toString(), 
+                                "0", 
+                                "0", 
+                                "не явка", 
+                                rsOP.getObject(2).toString(), 
+                                rsOP.getObject(3).toString(), 
+                                rsOP.getObject(1).toString()));
 //                LocalDateTime time = date.atTime(17, 0);
-                dMs.add(new DataModel(0, date.toString(), "0", "0", "не явка", rsOP.getObject(2).toString(), rsOP.getObject(3).toString(), rsOP.getObject(1).toString()));
+//                dMs.add(new DataModel(0, date.toString(), "0", "0", "не явка", rsOP.getObject(2).toString(), rsOP.getObject(3).toString(), rsOP.getObject(1).toString()));
 //                dMs.add(new DataModel(0, date.toString(), "0", "0", "не явка", rsOP.getObject(6).toString(), rsOP.getObject(7).toString(), rsOP.getObject(8).toString()));
             }
-
+            System.out.println(dMs.size());
+            for(Integer key : dMs.keySet()){
+                if(map.containsKey(key)){
+                    dMs.remove(key);
+                } else {
+                    //Вносим список неявившихся в коллекцию
+                    map.put(key, dMs.get(key));
+                }
+            }
+            System.out.println(dMs.size());
+/*
             //Нельзя проводить одновременно итерацию (перебор) коллекции и изменение ее элементов.
             //поэтому используем следующий код
             Iterator<DataModel> dMIterator = dMs.iterator();                    //создаем итератор
@@ -244,16 +285,17 @@ public class Main {
             }
 
 //            System.out.println(dMs.size());
+            */
             //Вносим список неявившихся в коллекцию
-            dMs.forEach((op) -> {
-                dataModels.add(op);
-            });
+//            dMs.forEach((op) -> {
+//                dataModels.add(op);
+//            });
 
             //Создаём документ excel
             System.out.println("Формируем файл Excel");
             ExcelWorker ew = new ExcelWorker();
             ew.setDate(date);
-            ew.worker(otchet_date, dataModels);
+            ew.worker(otchet_date, map);
             // Освобождаем ресурсы.
             System.out.println("Освобождаем ресурсы");
             stmt.close();

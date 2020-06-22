@@ -14,6 +14,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -113,7 +114,8 @@ public class ExcelWorker {
 //        row.createCell(2).setCellValue(dataModel.getPodr());
     }
 
-    public static void worker(String absolutefilepath, List<DataModel> dataModels) {
+//    public static void worker(String absolutefilepath, List<DataModel> dataModels) {
+    public static void worker(String absolutefilepath, Map<Integer, DataModel> map) {
 
         // создание самого excel файла в памяти
         HSSFWorkbook workbook = new HSSFWorkbook();
@@ -128,14 +130,17 @@ public class ExcelWorker {
 //        HSSFSheet sheet = workbook.createSheet("Просто лист");
 
         // заполняем список данными с детьми/сотрудниками
-        List<DataModel> dataList = dataModels;
+//        List<DataModel> dataList = dataModels;
+        Map<Integer, DataModel> mapList = map;
         //Список явившихся до 8.30
         List<DataModel> sheetDataModel0 = new ArrayList<>();
         //Список явивишихся после 8.30
         List<DataModel> sheetDataModel1 = new ArrayList<>();
 
         System.out.println("\tФормируем списки явившихся");
-        for (DataModel dataModel : dataList) {
+//        for (DataModel dataModel : dataList) {
+        for (Integer key : mapList.keySet()) {
+            DataModel dataModel = mapList.get(key);
             HSSFSheet sheet;
             try {
                 sheet = workbook.createSheet(dataModel.getPodr());
@@ -168,7 +173,8 @@ public class ExcelWorker {
 //            row5.setCellValue("Подразделение");
 
             List<DataModel> sheetDataModel = new ArrayList<>();
-            for (DataModel dataModel0 : dataList) {
+            for (Integer key0 : mapList.keySet()) {
+                DataModel dataModel0 = mapList.get(key0);
                 if (dataModel.getPodr() == null ? dataModel0.getPodr() == null : dataModel.getPodr().equals(dataModel0.getPodr())) {
                     sheetDataModel.add(dataModel0);
                 }
@@ -190,8 +196,9 @@ public class ExcelWorker {
 
         //Создаём лист с опоздавшими детьми
         System.out.println("\tФормируем списки опоздавших");
-        for (DataModel dataModel : dataList) {
-
+//        for (DataModel dataModel : dataList) {
+        for (Integer key : mapList.keySet()) {
+            DataModel dataModel = mapList.get(key);
             try {
                 LocalDate date_event = LocalDate.parse(dataModel.getDate());
                 LocalTime time_event = LocalTime.parse(dataModel.getTime());
@@ -275,7 +282,6 @@ public class ExcelWorker {
             row4.setCellValue("ФИО");
             row5.setCellValue("Подразделение");
 
-            
             for (DataModel data : sheetDataModel1) {
 //                System.out.println(dataModel.getPodr());
 //                System.out.println(data.getDate() + "|" + data.getTime() + "|" + data.getSt() + "|" + data.getDirection() + "|" + data.getFio());
@@ -292,7 +298,9 @@ public class ExcelWorker {
 
         //Создаём лист с неявившимися детьми
         System.out.println("\tФормируем список не явившихся");
-        for (DataModel dataModel : dataList) {
+//        for (DataModel dataModel : dataList) {
+        for (Integer key : mapList.keySet()) {
+            DataModel dataModel = mapList.get(key);
             HSSFSheet sheet;
             try {
                 sheet = workbook.createSheet("Неявка");
@@ -314,11 +322,13 @@ public class ExcelWorker {
             row0.setCellValue("Дата");
             row1.setCellValue("ФИО");
             row2.setCellValue("Подразделение");
-            
+
             //Список неявившихся
             List<DataModel> sheetDataModel2 = new ArrayList<>();
 
-            for (DataModel dataModel1 : dataList) {
+//            for (DataModel dataModel1 : dataList) {
+            for (Integer key1 : mapList.keySet()) {
+                DataModel dataModel1 = mapList.get(key1);
                 if (dataModel1.getId() == 0 && !"Школа".equals(dataModel1.getPodr()) && !"тех.персонал".equals(dataModel1.getPodr()) && !"Педагоги".equals(dataModel1.getPodr()) && !"Мед_работники".equals(dataModel1.getPodr())) {
                     sheetDataModel2.add(dataModel1);
                 }
